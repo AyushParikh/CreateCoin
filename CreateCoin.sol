@@ -1,9 +1,12 @@
 pragma solidity ^0.4.11;
 
 import './IERC20.sol';
+import './SafeMath.sol';
 
 contract CreateCoin is IERC20 {
     
+	using SafeMath for uint256;
+	
     uint public constant total_Supply = 1000000;
     string public constant symbol = "CCC";
     string public constant name = "CreateCoin";
@@ -29,8 +32,8 @@ contract CreateCoin is IERC20 {
             balances[msg.sender] >= _value
             && _value > 0
         );
-        balances[msg.sender]-=_value;
-        balances[_to]+= _value;
+        balances[msg.sender] = balances[msg.sender].sub(_value);
+        balances[_to] = balances[_to].add(_value);
         Transfer(msg.sender, _to, _value);
         return true;
     }
@@ -41,9 +44,9 @@ contract CreateCoin is IERC20 {
             && balances[_from] >= _value
             && _value > 0
         );
-        balances[_from] -= _value;
-        balances[_to] += _value;
-        allowed[_from][msg.sender] -= _value;
+        balances[_from] = balances[_from].sub(_value);
+        balances[_to] = balances[_to].add(_value);
+        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
         Transfer(_from, _to, _value);
         return true;
     }
